@@ -12,4 +12,4 @@ def visualize(dataset: pd.DataFrame) -> None:
                          "Age": "Age (years)",
                          "Fare": "Fare (British Pound)"},
                      title="Age to Fare")
-    plotly.offline.plot(fig, filename='scatter_age_fare.html', auto_open=False)
+    plotly.offline.plot(fig, filename='../plots/scatter_age_fare.html', auto_open=False)
