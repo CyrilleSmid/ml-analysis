@@ -31,6 +31,7 @@ def visualize_missing_data(df: pd.DataFrame) -> None:
 
 def visualize_parameter_distribution(df: pd.DataFrame, param: str) -> None:
     fig = px.histogram(df[param])
+    fig.show()
     plotly.offline.plot(fig, filename="../plots/parameter_histogram.html", auto_open=False)
 
 def box_plot(df: pd.DataFrame, param: str) -> None:
