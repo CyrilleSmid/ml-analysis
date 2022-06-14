@@ -1,10 +1,9 @@
 import numpy as np
 import pandas as pd
-from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import classification_report
+
+import data_analysis
 
 import matplotlib.pyplot as plt
 from sklearn import tree
@@ -23,16 +22,7 @@ def get_trained_model(df: pd.DataFrame) -> DecisionTreeClassifier:
 
     decision_tree.fit(X_train, y_train)
 
-    y_pred = decision_tree.predict(X_test)
-
-    print("Confusion Matrix:\n",
-          confusion_matrix(y_test, y_pred))
-
-    print("Accuracy:\n",
-          accuracy_score(y_test, y_pred) * 100)
-
-    print("Report:\n",
-          classification_report(y_test, y_pred))
+    data_analysis.analize_model(decision_tree, X_test=X_test, y_test=y_test)
 
     # plt.figure(figsize=(30, 20))    # Размер окна вывода в дюймах
     # tree.plot_tree(decision_tree,  feature_names=list(X.columns), filled=True, fontsize=10)

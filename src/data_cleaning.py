@@ -1,10 +1,11 @@
 import pandas as pd
 import numpy as np
 import math
+from typing import List
 
 import data_analysis
 
-def clean(df: pd.DataFrame) -> pd.DataFrame:
+def clean_training_dataset(df: pd.DataFrame) -> pd.DataFrame:
     df = df.drop(["PassengerId", "Name", "Ticket", "Cabin"], axis=1)
 
     df = clean_missing(df)
@@ -12,8 +13,14 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     df = notmalize_categorical(df)
 
     df_dedupped = df.drop_duplicates()
-
     return df_dedupped
+
+def normalize_for_prediction(df: pd.DataFrame) -> (List[int], pd.DataFrame):
+    ids = df["PassengerId"]
+    df = df.drop(["PassengerId", "Name", "Ticket", "Cabin"], axis=1)
+    df = clean_missing(df)
+    df = notmalize_categorical(df)
+    return ids, df
 
 def clean_missing(df: pd.DataFrame) -> pd.DataFrame:
     numeric_cols = df.select_dtypes(include=["number"]).columns

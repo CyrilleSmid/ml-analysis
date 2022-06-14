@@ -5,6 +5,10 @@ import plotly.graph_objs as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+
 def scatter(df: pd.DataFrame) -> None:
     # dataset.sort_values(by="Fare")
 
@@ -44,6 +48,18 @@ def visualize_categorical_outliers(df: pd.DataFrame) -> None:
     for i, column in enumerate(non_numeric_cols):
         fig.add_trace(go.Histogram(x=df[column], legendgrouptitle=column), row=1, col=i+1)
     plotly.offline.plot(fig, filename="../plots/categorical_histogram.html", auto_open=False)
+
+def analize_model(model, X_test, y_test) -> None:
+    y_pred = model.predict(X_test)
+
+    print("Confusion Matrix:\n",
+          confusion_matrix(y_test, y_pred))
+
+    print("Accuracy:\n",
+          accuracy_score(y_test, y_pred) * 100)
+
+    print("Report:\n",
+          classification_report(y_test, y_pred))
 
 if __name__ == "__main__":
     df = pd.read_csv(r"../datasets/train.csv", sep=",", header="infer", names=None, encoding="utf-8")
