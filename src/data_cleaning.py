@@ -1,16 +1,19 @@
-from typing import Tuple
 import pandas as pd
+import numpy as np
 import math
 
 import data_analysis
 
-def clean_and_normalize(df: pd.DataFrame) -> pd.DataFrame:
+def clean(df: pd.DataFrame) -> pd.DataFrame:
     df = df.drop(["PassengerId", "Name", "Ticket", "Cabin"], axis=1)
 
     df = clean_missing(df)
     df = clean_outliers(df)
+    df = notmalize_categorical(df)
 
-    return df
+    df_dedupped = df.drop_duplicates()
+
+    return df_dedupped
 
 def clean_missing(df: pd.DataFrame) -> pd.DataFrame:
     numeric_cols = df.select_dtypes(include=["number"]).columns
@@ -30,7 +33,8 @@ def clean_outliers(df: pd.DataFrame) -> pd.DataFrame:
     changes mild outliers to lower or upper fence
     '''
     cols = df.select_dtypes(include=["number"]).columns
-    cols = cols.drop(labels=["Survived"])
+    if "Survived" in cols:
+        cols = cols.drop(labels=["Survived"])
 
     # Extreme outliers
     Q1 = df[cols].quantile(0.05)
@@ -54,3 +58,13 @@ def clean_outliers(df: pd.DataFrame) -> pd.DataFrame:
         filtered_df.loc[filtered_df[col] > upper_fences[col], col] = math.floor(upper_fences[col])
 
     return filtered_df
+
+def notmalize_categorical(df: pd.DataFrame) -> pd.DataFrame:
+    df["Sex"] = np.where(df["Sex"] == "female", 1,0)
+
+    dummies = pd.get_dummies(df["Embarked"], drop_first=True)
+    dummies.rename(columns={"Q": "From_Queenstown", "S": "From_Southampton"}, inplace=True)
+
+    df = pd.concat([df, dummies], axis=1).drop("Embarked", axis=1)
+
+    return df
