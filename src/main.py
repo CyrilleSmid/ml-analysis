@@ -1,14 +1,16 @@
 import pandas as pd
 import numpy as np
 
-import data_analysis
-import data_processing
-import decision_tree
-import model_selection
-
 from sklearn.model_selection import train_test_split
 
-def predict_and_save(model, ids, X_test, file_name, is_neural_net=False) -> None:
+import data_analysis
+import data_processing
+import models
+
+def predict_and_save(model, file_name, is_neural_net=False) -> None:
+    test_df = pd.read_csv(r"../datasets/test.csv", sep=",", header="infer", names=None, encoding="utf-8")
+    ids, test_df = data_processing.normalize_for_prediction(test_df)
+
     pred_df = pd.DataFrame(ids)
     y_pred = model.predict(X_test)
 
@@ -29,16 +31,6 @@ if __name__ == "__main__":
 
     df = data_processing.clean_training_dataset(df)
 
-    # model_selection.compare(df)
-    target_col = "Survived"
-    data = df.loc[:, df.columns != target_col]
-    norm_data = (data - data.min()) / (data.max() - data.min())
-    target = df.loc[:, target_col]
-    X_train, X_test, y_train, y_test = train_test_split(data, target, test_size=0.3)
+    models.model_selection(df)
 
-    model = model_selection.build_neural_net()
-    model.fit(X_train, y_train, epochs=1000)
-
-    test_df = pd.read_csv(r"../datasets/test.csv", sep=",", header="infer", names=None, encoding="utf-8")
-    ids, test_df = data_processing.normalize_for_prediction(test_df)
-    predict_and_save(model, ids, test_df, file_name="neural_net_submission", is_neural_net=True)
+    # predict_and_save(neural_network, file_name="neural_net_submission", is_neural_net=True)
