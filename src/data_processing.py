@@ -22,6 +22,25 @@ def normalize_for_prediction(df: pd.DataFrame) -> (List[int], pd.DataFrame):
     df = notmalize_categorical(df)
     return ids, df
 
+def notmalize_categorical(df: pd.DataFrame) -> pd.DataFrame:
+    df["Sex"] = np.where(df["Sex"] == "female", 1,0)
+
+    dummies = pd.get_dummies(df["Embarked"], drop_first=True)
+    dummies.rename(columns={"Q": "From_Queenstown", "S": "From_Southampton"}, inplace=True)
+
+    df = pd.concat([df, dummies], axis=1).drop("Embarked", axis=1)
+
+    return df
+
+def normalize_for_nets(df: pd.DataFrame) -> pd.DataFrame:
+    norm_df = (df - df.min()) / (df.max() - df.min())
+    return norm_df
+
+def separate_data_and_target(df: pd.DataFrame, targets: List[str]) -> (pd.DataFrame, pd.DataFrame):
+    data = df.loc[:, df.columns != targets]
+    target = df.loc[:, targets]
+    return data, target
+
 def clean_missing(df: pd.DataFrame) -> pd.DataFrame:
     numeric_cols = df.select_dtypes(include=["number"]).columns
     non_numeric_cols = df.select_dtypes(exclude=["number"]).columns
@@ -65,13 +84,3 @@ def clean_outliers(df: pd.DataFrame) -> pd.DataFrame:
         filtered_df.loc[filtered_df[col] > upper_fences[col], col] = math.floor(upper_fences[col])
 
     return filtered_df
-
-def notmalize_categorical(df: pd.DataFrame) -> pd.DataFrame:
-    df["Sex"] = np.where(df["Sex"] == "female", 1,0)
-
-    dummies = pd.get_dummies(df["Embarked"], drop_first=True)
-    dummies.rename(columns={"Q": "From_Queenstown", "S": "From_Southampton"}, inplace=True)
-
-    df = pd.concat([df, dummies], axis=1).drop("Embarked", axis=1)
-
-    return df
