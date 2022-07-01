@@ -32,10 +32,6 @@ def notmalize_categorical(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
-def normalize_for_nets(df: pd.DataFrame) -> pd.DataFrame:
-    norm_df = (df - df.min()) / (df.max() - df.min())
-    return norm_df
-
 def separate_data_and_target(df: pd.DataFrame, targets: List[str]) -> (pd.DataFrame, pd.DataFrame):
     data = df.loc[:, df.columns != targets]
     target = df.loc[:, targets]
